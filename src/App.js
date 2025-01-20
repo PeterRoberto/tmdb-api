@@ -13,6 +13,7 @@ import MoviesDetails from './pages/MoviesDetails';
 import MovieCastDetails from './pages/MovieCastDetails';
 import NotFound from './pages/NotFound';
 import Search from './pages/Search';
+import Login from './pages/Login/Login';
 
 function App() {
 
@@ -30,6 +31,7 @@ function App() {
           <Route path="/search" element={<Search />} />
           <Route path="/company" element={<Navigate to="/movies" />} />
           <Route path="*" element={<NotFound /> } />
+          <Route path="/login" element={<Login />} />
         </Routes>
         
       </BrowserRouter>
