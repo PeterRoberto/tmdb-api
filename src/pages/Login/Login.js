@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './Login.module.css';
+
 
 // hook
 import { useFetch } from '../../hooks/useFetch';
@@ -29,9 +31,10 @@ const urlCreateSession = `https://api.themoviedb.org/3/authentication/session/ne
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
     
     // CHAMAR o Custom Hook
-    const { data, validateWithLogin, createSession, loading, error } = useFetch(createToken);
+    const { data, userSession, validateWithLogin, createSession, loading, error } = useFetch(createToken);
 
 
     // useEffect(() => {
@@ -53,10 +56,15 @@ const Login = () => {
         validateWithLogin(urlValidate, email, password, "POST", data.request_token);
         createSession(urlCreateSession, data.request_token);
         // authenticateUser(email, password, data.request_token);
-        
 
-        // setEmail("");
-        // setPassword("");
+        // console.log(userSession);
+        
+        if(userSession) {
+            navigate(`/dashboard`);
+        }
+
+        setEmail("");
+        setPassword("");
     }
 
   return (
