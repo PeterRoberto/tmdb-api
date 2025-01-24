@@ -9,8 +9,7 @@ import { useFetch } from '../../hooks/useFetch';
 
 const apiKey = process.env.REACT_APP_API_KEY;
 const createToken = `https://api.themoviedb.org/3/authentication/token/new?${apiKey}`;
-const urlValidate = `https://api.themoviedb.org/3/authentication/token/validate_with_login?${apiKey}`;
-const urlCreateSession = `https://api.themoviedb.org/3/authentication/session/new?${apiKey}`;
+// const urlValidate = `https://api.themoviedb.org/3/authentication/token/validate_with_login?${apiKey}`;
 
 
 // PASSO 1 - Criar Request TOKEN, pegar o link abaixo e concatenar com a API
@@ -34,7 +33,7 @@ const Login = () => {
     const navigate = useNavigate();
     
     // CHAMAR o Custom Hook
-    const { data, userSession, validateWithLogin, createSession, loading, error } = useFetch(createToken);
+    const { data, validateWithLogin, createSession, authenticateUser, teste, loading, error } = useFetch(createToken);
 
 
     // useEffect(() => {
@@ -53,13 +52,14 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
     
-        validateWithLogin(urlValidate, email, password, "POST", data.request_token);
-        createSession(urlCreateSession, data.request_token);
-        // authenticateUser(email, password, data.request_token);
+        validateWithLogin(email, password, data.request_token);
+        createSession(data.request_token);
+        authenticateUser(email, password, data.request_token);
 
-        // console.log(userSession);
         
-        if(userSession) {
+        
+        if(teste === true) {
+            console.log(teste.session_id);
             navigate(`/dashboard`);
         }
 

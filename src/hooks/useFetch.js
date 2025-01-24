@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
 
+const apiKey = process.env.REACT_APP_API_KEY;
+const urlValidate = `https://api.themoviedb.org/3/authentication/token/validate_with_login?${apiKey}`;
+const urlCreateSession = `https://api.themoviedb.org/3/authentication/session/new?${apiKey}`;
+
 
 export const useFetch = (url) => {
     const [data, setData] = useState(null);
@@ -7,15 +11,13 @@ export const useFetch = (url) => {
     const [error, setError] = useState(false);
     const [callFetch, setCallFetch] = useState(false);
     const [method, setMethod] = useState(null);
-    const [config, setConfig] = useState(null);
-    const [userSession, setUserSession] = useState(null);
     const [sessionId, setSessionId] = useState(null);
     
 
-    const validateWithLogin = async (urlValidate, user, password, method, token) => {
+    const validateWithLogin = async (user, password, token) => {
       try {
         const response = await fetch(urlValidate, {
-          method: method,
+          method: 'POST',
           headers: {
             "Accept": "application/json",
             'Content-Type': 'application/json',
@@ -34,9 +36,9 @@ export const useFetch = (url) => {
       
     };
 
-    const createSession = async (urlSession, token) => {
+    const createSession = async (token) => {
       try {
-        const response = await fetch(urlSession, {
+        const response = await fetch(urlCreateSession, {
           method: 'POST',
           headers: {
             'accept': 'application/json',
@@ -47,53 +49,68 @@ export const useFetch = (url) => {
           }),
         });
         const dataSession = await response.json();
-        console.log(dataSession)
+        console.log(dataSession);
         return dataSession.session_id;
       } catch (error) {
         console.error('Erro ao criar a sessão:', error);
       }
-      debugger
     };
     
-    // const authenticateUser = async (user, password, token) => {
-    //   // const requestToken = await data.request_token;
-    //   const isValid = await validateWithLogin(url, user, password, "POST", token);
-    //   console.log(user)
-    //   console.log(password)
-    //   console.log(token)
-    //   console.log(isValid)
+    
+    const authenticateUser = async (user, password, token) => {
+      const isValid = await validateWithLogin(user, password, token);
+      console.log('Confere a validação da função validateWithLogin ', isValid)
       
-    //   if (isValid) {
-    //     const sessionId = await createSession(token);
-    //     setSessionId(sessionId);
-    //     localStorage.setItem('sessionId', sessionId);
-    //   } else {
-    //     console.error('Autenticação falhou');
-    //   }
-    //   
-    // };
-
+      if (isValid) {
+        const sessionId = await createSession(token);
+        setSessionId(sessionId);
+        localStorage.setItem('sessionId', sessionId);
+      } else {
+        console.error('Autenticação falhou');
+      }
+    };
 
     useEffect(() => {
         
       const fechData = async () => {
-          setLoading(true);
+        setLoading(true);
 
-          try {
-              const res = await fetch(url);
-              const json = await res.json();
+        try {
+          const res = await fetch(url);
+          const json = await res.json();
 
-              setData(json);
-          } catch (error) {
-              setError("Houve algum erro ao carregar os dados.");
-          }
+            setData(json);
+        } catch (error) {
+          setError("Houve algum erro ao carregar os dados.");
+        }
 
-          setLoading(false);
+        setLoading(false);
       }
 
       fechData();
     }, [url, callFetch]);
 
+
+    // const logoutSession = async (url) => {
+    //   console.log(url);
+
+    //   try {
+    //     const urlDelete = await fetch(url, {
+    //       method: 'DELETE',
+    //       headers: {
+    //         'Accept': 'application/json',
+    //         'Content-Type': 'application/json',
+    //       },
+    //     });
+    //     const dataLogout = await urlDelete.json();
+    //     console.log(dataLogout);
+
+    //     return dataLogout.session_id;
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // };
+
     
-  return {data, validateWithLogin, createSession, loading, error};
+  return {data, validateWithLogin, createSession, authenticateUser, sessionId, loading, error};
 }
