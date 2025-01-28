@@ -7,13 +7,37 @@ const urlCreateSession = `https://api.themoviedb.org/3/authentication/session/ne
 
 export const useFetch = (url) => {
     const [data, setData] = useState(null);
+    const [sessionId, setSessionId] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
     const [callFetch, setCallFetch] = useState(false);
     const [method, setMethod] = useState(null);
-    const [sessionId, setSessionId] = useState(null);
     
 
+    // Requisição na URL para o REQUEST TOKEN
+    useEffect(() => {
+        
+      const fechData = async () => {
+        setLoading(true);
+
+        try {
+          const res = await fetch(url);
+          const json = await res.json();
+
+          setData(json);
+        } catch (error) {
+          setError("Houve algum erro ao carregar os dados.");
+        }
+
+        setLoading(false);
+      }
+
+      fechData();
+    }, [url, callFetch]);
+
+
+    // 2 - Recebe o USER e PASSWORD para que com o TOKEN gerado antes seja passado
+    // para o BODY
     const validateWithLogin = async (user, password, token) => {
       try {
         const response = await fetch(urlValidate, {
@@ -36,12 +60,14 @@ export const useFetch = (url) => {
       
     };
 
+
+    // 3 Criar a sessão
     const createSession = async (token) => {
+      setLoading(true);
       try {
         const response = await fetch(urlCreateSession, {
           method: 'POST',
           headers: {
-            'accept': 'application/json',
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -49,18 +75,23 @@ export const useFetch = (url) => {
           }),
         });
         const dataSession = await response.json();
-        console.log(dataSession);
+        // console.log(dataSession);
+        
         return dataSession.session_id;
       } catch (error) {
         console.error('Erro ao criar a sessão:', error);
       }
+      setLoading(false);
     };
-    
+
+
     
     const authenticateUser = async (user, password, token) => {
       const isValid = await validateWithLogin(user, password, token);
       console.log('Confere a validação da função validateWithLogin ', isValid)
-      
+      // console.log(user)
+      // console.log(password)
+      // console.log(token)
       if (isValid) {
         const sessionId = await createSession(token);
         setSessionId(sessionId);
@@ -70,26 +101,8 @@ export const useFetch = (url) => {
       }
     };
 
-    useEffect(() => {
-        
-      const fechData = async () => {
-        setLoading(true);
 
-        try {
-          const res = await fetch(url);
-          const json = await res.json();
-
-            setData(json);
-        } catch (error) {
-          setError("Houve algum erro ao carregar os dados.");
-        }
-
-        setLoading(false);
-      }
-
-      fechData();
-    }, [url, callFetch]);
-
+    
 
     // const logoutSession = async (url) => {
     //   console.log(url);

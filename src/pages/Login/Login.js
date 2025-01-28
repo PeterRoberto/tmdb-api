@@ -28,42 +28,36 @@ const createToken = `https://api.themoviedb.org/3/authentication/token/new?${api
 // console.log(createSession)
 
 const Login = () => {
-    const [email, setEmail] = useState("");
+    const [user, setUser] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
     
     // CHAMAR o Custom Hook
-    const { data, validateWithLogin, createSession, authenticateUser, teste, loading, error } = useFetch(createToken);
+    const { data, validateWithLogin, createSession, authenticateUser, loading, error } = useFetch(createToken);
+  
+    useEffect(() => {
+        if(data) {
+            // PASSO 3
+            // const addToken = `https://www.themoviedb.org/authenticate/${data.request_token}/allow`;
 
-
-    // useEffect(() => {
-    //     if(data) {
-    //         // PASSO 3
-    //         const addToken = `https://www.themoviedb.org/authenticate/${data.request_token}/allow`;
-
-    //         console.log(data);
-    //         console.log(data.request_token);
-    //         console.log(createSession);
-    //         httpConfig(null, "POST", data.request_token);
-    //     }
-    // }, [data]);
+            console.log(data);
+            
+            // console.log(data.request_token);
+            // console.log(createSession);
+            // httpConfig(null, "POST", data.request_token);
+        }
+    }, [data]);
 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
-        validateWithLogin(email, password, data.request_token);
-        createSession(data.request_token);
-        authenticateUser(email, password, data.request_token);
 
-        
-        
-        if(teste === true) {
-            console.log(teste.session_id);
-            navigate(`/dashboard`);
+        if(data.request_token) {
+            validateWithLogin(user, password, data.request_token);
+            authenticateUser(user, password, data.request_token);
         }
 
-        setEmail("");
+        setUser("");
         setPassword("");
     }
 
@@ -75,11 +69,11 @@ const Login = () => {
             <span>Email:</span>
             <input 
                 type="text" 
-                name="email" 
+                name="email"
                 required 
                 placeholder="E-mail do usuário"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={user}
+                onChange={(e) => setUser(e.target.value)}
             />
             </label>
             <label>
