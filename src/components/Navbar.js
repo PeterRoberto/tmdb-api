@@ -1,14 +1,13 @@
-import {NavLink, Navigate } from "react-router-dom"
+import {NavLink, useNavigate } from "react-router-dom"
 import './Navbar.css'
 
 // Hook
 import { useFetch } from "../hooks/useFetch";
 import { AuthValue } from "../context/AuthContext";
 
-
 const Navbar = () => {
-  const { currentSession } = AuthValue();
-
+  const { loggedUser } = AuthValue();
+  
   return (
     <header className="header">
       <div className="container">
@@ -16,9 +15,7 @@ const Navbar = () => {
           <NavLink to="/">Home</NavLink>
           <NavLink to="/movies">Movies</NavLink>
 
-          {/* {console.log(data.user)} */}
-          {/* {console.log(currentSession)} */}
-          {!currentSession && (
+          {!loggedUser && (
             <>
               <NavLink to="/login">Sign In</NavLink>
             </>

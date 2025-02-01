@@ -7,6 +7,7 @@ const urlCreateSession = `https://api.themoviedb.org/3/authentication/session/ne
 
 export const useFetch = (url) => {
     const [data, setData] = useState(null);
+    const [userDetails, setUserDetails] = useState(null);
     const [sessionId, setSessionId] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
@@ -75,8 +76,7 @@ export const useFetch = (url) => {
           }),
         });
         const dataSession = await response.json();
-        // console.log(dataSession);
-        
+        console.log(dataSession.session_id);
         return dataSession.session_id;
       } catch (error) {
         console.error('Erro ao criar a sessão:', error);
@@ -89,9 +89,6 @@ export const useFetch = (url) => {
     const authenticateUser = async (user, password, token) => {
       const isValid = await validateWithLogin(user, password, token);
       console.log('Confere a validação da função validateWithLogin ', isValid)
-      // console.log(user)
-      // console.log(password)
-      // console.log(token)
       if (isValid) {
         const sessionId = await createSession(token);
         setSessionId(sessionId);
@@ -101,8 +98,17 @@ export const useFetch = (url) => {
       }
     };
 
+ 
+    const accountDetails = async (urlUserDetails) => {
+      try {
+        const res = await fetch(urlUserDetails);
+        const json = await res.json();
+        setUserDetails(json);
+      } catch (error) {
+        console.log("Erro ao buscar dados do usuário:", error);
+      }
+    };
 
-    
 
     // const logoutSession = async (url) => {
     //   console.log(url);
@@ -124,6 +130,5 @@ export const useFetch = (url) => {
     //   }
     // };
 
-    
-  return {data, validateWithLogin, createSession, authenticateUser, sessionId, loading, error};
+  return {data, validateWithLogin, authenticateUser, accountDetails, sessionId, userDetails, loading, error};
 }

@@ -4,18 +4,23 @@ import { useEffect } from "react";
 
 // CSS
 import "./Movies.css"
+
 import { Link } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch";
+import { AuthValue } from "../context/AuthContext";
+
 
 const imageUrl = "https://image.tmdb.org/t/p/w500/";
 const urlMovie = "https://api.themoviedb.org/3/movie/";
 const apiKey = process.env.REACT_APP_API_KEY;
 const concatUrl = `${urlMovie}popular?${apiKey}`;
 
+
 const Movies = () => {
-  const {data, loading, error} = useFetch(concatUrl);
+  const {data, loading, error } = useFetch(concatUrl);
   const [topMovies, setTopMovies] = useState([]);
-    
+  const { loggedUser } = AuthValue();
+  
   useEffect(() => {
     if (data && data.results) {
       setTopMovies(data.results);
@@ -25,7 +30,7 @@ const Movies = () => {
 
   return (
     <div>
-      <h1 className="title-page">Popular movies</h1>
+      <h1 className="title-page">Popular movies {loggedUser}</h1>
       
       <div className="container">
         {loading && <p>Carregando...</p>}

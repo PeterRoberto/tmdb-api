@@ -21,16 +21,27 @@ import Search from './pages/Search';
 import Login from './pages/Login/Login';
 import { useEffect } from 'react';
 
-function App() {
-  const getSessionStorage = localStorage.getItem('sessionId');
-  const [currentSession, setCurrentSession] = useState(undefined);
-  const { authenticateUser } = useFetch();
+const apiKey = process.env.REACT_APP_API_KEY;
+const getLocalStorage = localStorage.getItem("sessionId");
+const urlUserDetails = `https://api.themoviedb.org/3/account?${apiKey}&session_id=${getLocalStorage}`;
 
-  const loadingSession = currentSession === undefined;
+function App() {
+  const { accountDetails, userDetails } = useFetch();
+  const [loggedUser, setLoggedUser] = useState();
+
+  
+  useEffect(() => {
+    accountDetails(urlUserDetails);
+  }, []);
+  
+
+  const loadingSession = userDetails === undefined;
 
   useEffect(() => {
-    setCurrentSession(getSessionStorage);
-  }, [authenticateUser]);
+    if(userDetails) {
+      setLoggedUser(userDetails.username);
+    }
+  }, [userDetails]);
 
   if(loadingSession) {
     return <p>...carregando</p>
@@ -38,7 +49,7 @@ function App() {
 
   return (
     <div className="App">
-      <AuthProvider value={{ currentSession }}>
+      <AuthProvider value={{ loggedUser }}>
         <BrowserRouter>
           <Navbar />
           <SearchForm />
