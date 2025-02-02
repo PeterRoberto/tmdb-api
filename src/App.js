@@ -28,6 +28,7 @@ const urlUserDetails = `https://api.themoviedb.org/3/account?${apiKey}&session_i
 function App() {
   const { accountDetails, userDetails } = useFetch();
   const [loggedUser, setLoggedUser] = useState();
+  const [imgLoggedUser, setImgLoggedUser] = useState();
 
   
   useEffect(() => {
@@ -40,6 +41,7 @@ function App() {
   useEffect(() => {
     if(userDetails) {
       setLoggedUser(userDetails.username);
+      setImgLoggedUser(userDetails.avatar.tmdb.avatar_path);
     }
   }, [userDetails]);
 
@@ -49,7 +51,7 @@ function App() {
 
   return (
     <div className="App">
-      <AuthProvider value={{ loggedUser }}>
+      <AuthProvider value={{ loggedUser, imgLoggedUser }}>
         <BrowserRouter>
           <Navbar />
           <SearchForm />

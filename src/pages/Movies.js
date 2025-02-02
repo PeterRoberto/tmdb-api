@@ -19,7 +19,7 @@ const concatUrl = `${urlMovie}popular?${apiKey}`;
 const Movies = () => {
   const {data, loading, error } = useFetch(concatUrl);
   const [topMovies, setTopMovies] = useState([]);
-  const { loggedUser } = AuthValue();
+  const { loggedUser, imgLoggedUser } = AuthValue();
   
   useEffect(() => {
     if (data && data.results) {
@@ -30,8 +30,10 @@ const Movies = () => {
 
   return (
     <div>
-      <h1 className="title-page">Popular movies {loggedUser}</h1>
-      
+      <h1 className="title-page">Popular movies</h1>
+      {/* <h3 className="title-page">{loggedUser}</h3>
+      <img src={`${imageUrl + imgLoggedUser}`} alt={topMovies.original_title} title={topMovies.original_title} ></img> */}
+
       <div className="container">
         {loading && <p>Carregando...</p>}
         {error && <p>Carregando...</p>}
